@@ -19,7 +19,7 @@ if __name__ == "__main__":
 	print("##                                 ##")
 	print("##              gEGeFroD           ##")
 	print("## get Expression Gene From Deseq2 ##")
-	print("##            version 1.0          ##")
+	print("##            version 2.0          ##")
 	print("##                                 ##")
 	print("##             Created by          ##")
 	print("##   Sebastian Contreras-Riquelme  ##")
@@ -38,6 +38,7 @@ if __name__ == "__main__":
 	parser.add_argument("-c","--condition_name", help="Condition column name to select columns", required=True)
 	parser.add_argument("-g","--gene_name", help="Gene column name to select columns. Default: gene", default="gene")
 	parser.add_argument("-f","--output_file", help="Output file to save results. Default = ./output", default="./output")
+	parser.add_argument("-m","--minCount", help="minimum number of counts to consider. Default = 10", default=10, type=int)
 	
 	args = parser.parse_args()
 
@@ -47,6 +48,7 @@ if __name__ == "__main__":
 	print("  Condition column name: "+args.condition_name)
 	print("  Gene column name: "+args.gene_name)
 	print("  Output File: "+args.output_file)
+	print("  Minimum number of counts: "+str(args.minCount))
 	print("\n")
 
 	columnsToUse = []
@@ -56,18 +58,15 @@ if __name__ == "__main__":
 	for column in df.columns:
 		if args.condition_name in column:
 			columnsToUse.append(column)
-	
 	for i in range(len(df[columnsToUse[0]])):
-		suma = 0
-		zero = False
+		minCountAproved = True
 		for column in columnsToUse:
-			suma += df[column][i]
-			if df[column][i] == 0:
-				zero = True
-		if zero == True:
-			average = suma/len(columnsToUse)
+			if float(df[column][i]) < args.minCount:
+				minCountAproved = False
+		if minCountAproved == True:
 			outFile.write(df[args.gene_name][i]+"\n")
 	outFile.close()
 	done()
 	
+
 
