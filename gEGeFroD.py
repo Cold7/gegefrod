@@ -19,7 +19,7 @@ if __name__ == "__main__":
 	print("##                                 ##")
 	print("##              gEGeFroD           ##")
 	print("## get Expression Gene From Deseq2 ##")
-	print("##            version 2.0          ##")
+	print("##            version 3.0          ##")
 	print("##                                 ##")
 	print("##             Created by          ##")
 	print("##   Sebastian Contreras-Riquelme  ##")
@@ -39,6 +39,7 @@ if __name__ == "__main__":
 	parser.add_argument("-g","--gene_name", help="Gene column name to select columns. Default: gene", default="gene")
 	parser.add_argument("-f","--output_file", help="Output file to save results. Default = ./output", default="./output")
 	parser.add_argument("-m","--minCount", help="minimum number of counts to consider. Default = 10", default=10, type=int)
+	
 	
 	args = parser.parse_args()
 
@@ -60,11 +61,14 @@ if __name__ == "__main__":
 			columnsToUse.append(column)
 	for i in range(len(df[columnsToUse[0]])):
 		minCountAproved = True
+		average = 0
 		for column in columnsToUse:
 			if float(df[column][i]) < args.minCount:
 				minCountAproved = False
+			average += float(df[column][i]) #to compute an average
 		if minCountAproved == True:
-			outFile.write(df[args.gene_name][i]+"\n")
+			average = average/len(columnsToUse)
+			outFile.write(df[args.gene_name][i]+"\t"+str(average)+"\n")
 	outFile.close()
 	done()
 	
